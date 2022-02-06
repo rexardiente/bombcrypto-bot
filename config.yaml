@@ -1,0 +1,57 @@
+---
+
+# Time intervals configuration
+time_intervals:
+  # Time interval for check if there are available heroes to work
+  # Default value (in minutes): 10
+  send_heroes_for_work: 10
+
+  # Time interval to update heroes position in the map,
+  # Default value (in minutes): 3
+  refresh_heroes_positions: 3
+
+  # Time interval to check for new maps
+  # Default value (in minutes): 5
+  check_for_new_map_button: 5
+
+  # Time interval to check for captcha.
+  # Default value (in minutes): 1
+  check_for_captcha: 1
+
+  # Time interval to check for login request
+  # Default value (in minutes): 3
+  check_for_login: 5
+
+  # Time interval between movements
+  # Default value (in seconds): 1
+  movements_interval: 1
+
+# How confident the bot needs to be to click the buttons (values from 0 to 1. 0 is the minimum value, 1 is the maximum value)
+threshold:
+  # Default value: 0.7
+  default: 0.7
+
+  # [en_US]
+  # Default value: 0.8
+  commom: 0.8
+
+extension:
+  URL: "chrome-extension://jgmnpgcblmgiipfpbcdimoenjinnacap/home.html#initialize/welcome"
+  PATH: "/system_path/bombcrypto-bot/metamask-chrome-10.9.0.crx"
+
+# Note: Never show this to anyone...
+# wallet secret recovery phrase and wallet password
+wallet:
+  SECRET_RECOVERY_PHRASE: "xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx"
+  NEW_PASSWORD: "password12345"
+  # Bomber crypto network for metamask wallet
+  network_name: "Smart Chain"
+  rpc_url: "https://bsc-dataseed.binance.org/"
+  chain_id: 56
+  symbol: "BNB"
+  block_exp_url: "https://bscscan.com"
+  # 1st value is default, make sure it is not removed or changed
+  accounts: [
+              "xxxxxxxxxxxxxxxxxxx"
+
+  ]
