@@ -60,7 +60,7 @@ pip install -r requirements.txt
 ### It is finished! Now to run the bot you just need to type:
 
 ```
-python index.py
+python3 index.py
 ```
 
 ![run](https://github.com/rexardiente/bombcrypto-bot/raw/main/readme-images/run.png)
@@ -69,7 +69,7 @@ python index.py
 
 ## Problem installing dependencies
 ```
- sudo python3 -m pip install dependency-name
+ sudo python3 -m pip install -r requirements.txt
 ```
 
 ## Pay me a coffe :)
