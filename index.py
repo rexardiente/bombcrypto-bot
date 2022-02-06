@@ -25,7 +25,9 @@ c = yaml.safe_load(stream)
 ct = c['threshold']
 xt = c['extension']
 wl = c['wallet']
-pause = c['time_intervals']['movements_interval']
+time_intervals = c['time_intervals']
+pause = time_intervals['movements_interval']
+round_robin_scheduler = time_intervals['round_robin_scheduler']
 pyautogui.PAUSE = pause
 
 
@@ -321,7 +323,7 @@ def round_robin_clicker():
 
     # make sure to update scheduler if needed
     if current_timestamp >= scheduler:
-        scheduler = current_timestamp + (60 * 15)
+        scheduler = current_timestamp + (60 * round_robin_scheduler)
 
 
 def main():
@@ -356,7 +358,7 @@ def main():
     else:
         time.sleep(20)
     # track the scheduler started in timestamp format
-    scheduler = int(time.time()) + (60 * 15)
+    scheduler = int(time.time()) + (60 * round_robin_scheduler)
     # track all open Google Chrome browser, and iterate each one.
     icons = positions(images[os_browser], threshold=0.5)
     for (x, y, w, h) in icons:
@@ -370,9 +372,8 @@ def main():
     # set every 3 minutes, do click a round-robin alt-tab with click to avoid server disconnection
     while True:
         round_robin_clicker()
-        print("Waiting for {} minutes to run next scheduler.".format(3))
-        # time.sleep(60*3)
-        for i in tqdm(range(3*60)):
+        print("Waiting for {} minutes to run next scheduler.".format(round_robin_scheduler))
+        for i in tqdm(range(round_robin_scheduler*60)):
             time.sleep(1)
 
 

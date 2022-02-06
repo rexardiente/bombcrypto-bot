@@ -2,6 +2,9 @@
 
 # Time intervals configuration
 time_intervals:
+  # System round robin scheduler
+  # Default value (in minutes): 10
+  round_robin_scheduler: 10
   # Time interval for check if there are available heroes to work
   # Default value (in minutes): 10
   send_heroes_for_work: 10
