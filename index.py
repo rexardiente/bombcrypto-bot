@@ -19,7 +19,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 # Load config file.
-SYSTEM_PATH = "PATH/bombcrypto-bot-main"
+SYSTEM_PATH = "PATH/bombcrypto-bot"
 stream = open("{}/config.yaml".format(SYSTEM_PATH), 'r')
 c = yaml.safe_load(stream)
 ct = c['threshold']
@@ -228,7 +228,25 @@ def init_wallet(private_key, is_sub_account):
     driver.execute_script('''window.open("https://bombcrypto.io/","_blank");''')
     driver.switch_to.window(driver.window_handles[1])
     WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "playnow"))).click()
-    driver.execute_script("document.body.style.zoom='80%'")
+    # check if screen is less than 1920x1080 resolution then zoom out to 80%
+    # to make sure game is displayed in fullscreen for the bot to work properly.
+    if system_screen_size()[0] < 1920:
+        print("Current Screen size is {}".format(screen_width))
+        driver.execute_script("document.body.style.zoom='80%'")
+    else:
+        pass
+    # let wallet load properly in the browser cache...
+    # time.sleep(2)
+    wait.until(EC.number_of_windows_to_be(3))
+    # remove empty tab and use the wallet tab
+    try:
+        driver.switch_to.window(driver.window_handles[0])
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+        driver.close()
+    finally:
+        wait.until(EC.number_of_windows_to_be(1))
+        driver.switch_to.window(driver.window_handles[0])
 
 
 def login():
