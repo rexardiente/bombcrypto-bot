@@ -4,7 +4,10 @@
 time_intervals:
   # System round robin scheduler
   # Default value (in minutes): 10
-  round_robin_scheduler: 10
+  round_robin_scheduler: 2
+  # System round robin scheduler
+  # Default value (in minutes): 10
+  go_work_all_scheduler: 15
   # Time interval for check if there are available heroes to work
   # Default value (in minutes): 10
   send_heroes_for_work: 10
@@ -40,7 +43,7 @@ threshold:
 
 extension:
   URL: "chrome-extension://jgmnpgcblmgiipfpbcdimoenjinnacap/home.html#initialize/welcome"
-  PATH: "/system_path/bombcrypto-bot/metamask-chrome-10.9.0.crx"
+  PATH: "PATH/bombcrypto-bot-main/metamask-chrome-10.9.0.crx"
 
 # Note: Never show this to anyone...
 # wallet secret recovery phrase and wallet password
@@ -55,6 +58,6 @@ wallet:
   block_exp_url: "https://bscscan.com"
   # 1st value is default, make sure it is not removed or changed
   accounts: [
-              "xxxxxxxxxxxxxxxxxxx"
+              "default"
 
   ]

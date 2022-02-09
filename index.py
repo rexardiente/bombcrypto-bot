@@ -19,7 +19,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 # Load config file.
-SYSTEM_PATH = "system_path/custom-bomb-crypto"
+SYSTEM_PATH = "PATH/bombcrypto-bot-main"
 stream = open("{}/config.yaml".format(SYSTEM_PATH), 'r')
 c = yaml.safe_load(stream)
 ct = c['threshold']
@@ -28,6 +28,7 @@ wl = c['wallet']
 time_intervals = c['time_intervals']
 pause = time_intervals['movements_interval']
 round_robin_scheduler = time_intervals['round_robin_scheduler']
+go_work_all_scheduler = time_intervals['go_work_all_scheduler']
 pyautogui.PAUSE = pause
 
 
@@ -198,6 +199,7 @@ def init_wallet(private_key, is_sub_account):
     time.sleep(2)
     #  if not the owner then import new private key and change wallet account
     if is_sub_account:
+        time.sleep(3)
         # point the cursor into network button
         # then add # to make it pointed into accounts button
         accounts_tab = positions(images['networks_tab'], threshold=0.7)
@@ -242,52 +244,43 @@ def login():
     if click_button(images['select-wallet-2'], timeout=8):
         pass
     # make sure connect wallet button is clicked
-    if not click_button(images['connect-wallet'], timeout=10):
-        print("make sure connect wallet button is clicked!!!")
-        # newly created account
-        if click_button(images['connect-wallet'], timeout=10):
-            pass
-        if click_button(images['btn-next'], timeout=8):
-            pass
-        if click_button(images['btn-connect'], timeout=8):
-            pass
-        # sometimes signup popup won't show fast
-        if click_button(images['select-wallet-2'], timeout=8):
-            pass
-    else:
-        pass
-        # if server maintenance, exit
-        # if len(positions(images['server-maintenance'], threshold=ct['default'])) == 0:
-        #     print('😿 Server Maintenance detected, logging in!')
-        #     click_button(images['ok'], timeout=5)
-        #     return
-        # if login success, then open game panel
-        # if click_button(images['treasure-hunt-icon'], timeout=15):
-        #     print('Successfully login, treasure hunt btn clicked')
-        #     return
-    # if not click_button(images['select-wallet-1-no-hover'], ):
-    #     if click_button(images['select-wallet-1-hover'], threshold=ct['select_wallet_buttons']):
+    # if not click_button(images['connect-wallet'], timeout=10):
+    #     print("make sure connect wallet button is clicked!!!")
+    #     # newly created account
+    #     if click_button(images['connect-wallet'], timeout=10):
+    #         pass
+    #     if click_button(images['btn-next'], timeout=8):
+    #         pass
+    #     if click_button(images['btn-connect'], timeout=8):
+    #         pass
+    #     # sometimes signup popup won't show fast
+    #     if click_button(images['select-wallet-2'], timeout=8):
     #         pass
     # else:
     #     pass
 
 
 def automate_gameplay():
+    # sometimes it takes time to load
+    time.sleep(2)
     if click_button(images['hero-icon'], timeout=5):
         print('Treasure hunt btn clicked')
-        time.sleep(1)
+        pass
     if click_button(images['go-rest-all'], timeout=5):
         pass
     if click_button(images['go-work-all'], timeout=5):
         pass
     # sometimes loading the content is slow
-    if not click_button(images['hero-icon'], timeout=5):
-        print("Re-run automate_gameplay method for validation")
-        if click_button(images['hero-icon'], timeout=5):
-            pass
+    # if not click_button(images['hero-icon'], timeout=5):
+    #     print("Re-run automate_gameplay method for validation")
+    #     if click_button(images['hero-icon'], timeout=5):
+    #         pass
     # return to home page to start game
     if click_button(images['x'], timeout=5):
-        click_button(images['treasure-hunt-icon'], timeout=10)
+        if click_button(images['treasure-hunt-icon'], timeout=10):
+            pass
+        else:
+            return
 
 
 def set_all_work():
@@ -301,7 +294,7 @@ def round_robin_clicker():
     global scheduler
     current_timestamp = int(time.time())
     # track all available browsers
-    icons = positions(images[os_browser], threshold=0.5)
+    icons = positions(images[os_browser], threshold=0.7)
     for (x, y, w, h) in icons:
         # make sure that wallet isn't disconnected
         try:
@@ -310,7 +303,8 @@ def round_robin_clicker():
             # place the cursor into the browser icon and click
             random_move(x + (w / 2), y + (h / 2), 1)
             pyautogui.click()
-            time.sleep(1)
+
+        time.sleep(1)
         # Set back all characters to work if 15 minutes has passed based on scheduler
         if current_timestamp >= scheduler:
             set_all_work()
@@ -323,7 +317,7 @@ def round_robin_clicker():
 
     # make sure to update scheduler if needed
     if current_timestamp >= scheduler:
-        scheduler = current_timestamp + (60 * round_robin_scheduler)
+        scheduler = current_timestamp + (60 * go_work_all_scheduler)
 
 
 def main():
@@ -341,7 +335,7 @@ def main():
         os_browser = "linux-chrome"
     elif current_platform == "darwin":
         os_browser = "macos-chrome"
-    elif current_platform == "win32":
+    elif current_platform == "win32" or current_platform == "windows":
         os_browser = "windows-chrome"
     # initialize browsers and wallet based on the accounts count
     for x in range(0, len(accounts)):
@@ -356,25 +350,28 @@ def main():
     if len(accounts) > 2:
         time.sleep(5)
     else:
-        time.sleep(20)
-    # track the scheduler started in timestamp format
-    scheduler = int(time.time()) + (60 * round_robin_scheduler)
+        time.sleep(15)
     # track all open Google Chrome browser, and iterate each one.
-    icons = positions(images[os_browser], threshold=0.5)
+    icons = positions(images[os_browser], threshold=0.7)
     for (x, y, w, h) in icons:
         # place the cursor into the browser icon and click
-        # random_move(x + (w / 2), y + (h / 2), 1)
-        random_move(x + (w / 2), y + (h / 2), 1, to_up=-15)
+        random_move(x + (w / 2), y + (h / 2), 1)
+        time.sleep(0.9)
+        # random_move(x + (w / 2), y + (h / 2), 1, to_up=-15)
         pyautogui.click()
         # add delay to make sure game is loaded properly
         login()
         automate_gameplay()
+
+    # track the scheduler started in timestamp format
+    scheduler = int(time.time()) + (60 * go_work_all_scheduler)
     # set every 3 minutes, do click a round-robin alt-tab with click to avoid server disconnection
     while True:
         round_robin_clicker()
         print("Waiting for {} minutes to run next scheduler.".format(round_robin_scheduler))
-        for i in tqdm(range(round_robin_scheduler*60)):
-            time.sleep(1)
+        time.sleep(round_robin_scheduler*60)
+        # for i in tqdm(range(round_robin_scheduler*60)):
+        #     time.sleep(1)
 
 
 if __name__ == '__main__':
