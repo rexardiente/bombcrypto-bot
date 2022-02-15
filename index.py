@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from cv2 import cv2
 from os import listdir
-from random import random
+from random import random, randint
 import numpy as np
 import mss
 import pyautogui
@@ -92,8 +92,8 @@ def add_randomness(n, randomn_factor_size=None):
 
 
 def random_move(x, y, t, to_right=0, to_up=0):
-    pyautogui.moveTo(x + to_right, y + to_up, t / 1)
-    # pyautogui.moveTo(add_randomness(x, 10), add_randomness(y, 10), t + random() / 2)
+    # pyautogui.moveTo(x + to_right, y + to_up, t / 1)
+    pyautogui.moveTo(add_randomness(x + to_right, 10), add_randomness(y + to_up, 10), t + random() / 2)
 
 
 def click_button(img, position='left', timeout=3, threshold=ct['default']):
@@ -169,7 +169,7 @@ def init_wallet(private_key, is_sub_account):
 
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     driver.implicitly_wait(10)
-    wait = WebDriverWait(driver, 10)
+    wait = WebDriverWait(driver, 20)
     # wait all 2 windows are loaded
     wait.until(EC.number_of_windows_to_be(2))
     # remove empty tab and use the wallet tab
@@ -215,7 +215,6 @@ def init_wallet(private_key, is_sub_account):
     time.sleep(2)
     #  if not the owner then import new private key and change wallet account
     if is_sub_account:
-        time.sleep(3)
         # point the cursor into network button
         # then add # to make it pointed into accounts button
         accounts_tab = positions(images['networks_tab'], threshold=0.7)
@@ -238,92 +237,57 @@ def init_wallet(private_key, is_sub_account):
             random_move(kx + (kw / 2), ky + (kh / 2), 1)
             pyautogui.click()
         time.sleep(0.5)
-    else:
-        pass
+
     # open game landing page in new tab, and set the game ready to play
-    driver.execute_script('''window.open("https://bombcrypto.io/","_blank");''')
+    driver.execute_script('''window.open("https://app.bombcrypto.io/","_blank");''')
     driver.switch_to.window(driver.window_handles[1])
-    WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "play-now"))).click()
-    # check if screen is less than 1920x1080 resolution then zoom out to 80%
-    # to make sure game is displayed in fullscreen for the bot to work properly.
-    if system_screen_size()[0] < 1920:
-        print("Current Screen size is {}".format(screen_width))
-        driver.execute_script("document.body.style.zoom='80%'")
-    else:
-        pass
-    # let wallet load properly in the browser cache...
-    # time.sleep(2)
-    wait.until(EC.number_of_windows_to_be(3))
+    wait.until(EC.number_of_windows_to_be(2))
     # remove empty tab and use the wallet tab
     try:
-        driver.switch_to.window(driver.window_handles[0])
-        driver.close()
         driver.switch_to.window(driver.window_handles[0])
         driver.close()
     finally:
         wait.until(EC.number_of_windows_to_be(1))
         driver.switch_to.window(driver.window_handles[0])
-
-
-def login():
-    # Terms and service process
-    if is_image_exists(images['terms-and-service'], timeout=20):
-        if click_button(images['terms-and-service-checkbox'], timeout=10):
-            if click_button(images['terms-and-service-accept'], timeout=10):
-                pass
-    # to avoid error if no accept terms and conditions needed
-    else:
-        pass
-
-    if click_button(images['connect-wallet'], timeout=10):
-        print('🎉 Connect wallet button detected, logging in!')
-        pass
-    # newly created account
-    if click_button(images['btn-next'], timeout=8):
-        if click_button(images['btn-connect'], timeout=8):
-            pass
-    # sometimes signup popup won't show fast
-    time.sleep(2)
-    if click_button(images['select-wallet-2'], timeout=8):
-        pass
-    # make sure connect wallet button is clicked
-    # if not click_button(images['connect-wallet'], timeout=10):
-    #     print("make sure connect wallet button is clicked!!!")
-    #     # newly created account
-    #     if click_button(images['connect-wallet'], timeout=10):
-    #         pass
-    #     if click_button(images['btn-next'], timeout=8):
-    #         pass
-    #     if click_button(images['btn-connect'], timeout=8):
-    #         pass
-    #     # sometimes signup popup won't show fast
-    #     if click_button(images['select-wallet-2'], timeout=8):
-    #         pass
+    # check if screen is less than 1920x1080 resolution then zoom out to 80%
+    # to make sure game is displayed in fullscreen for the bot to work properly.
+    # screen_width = system_screen_size()[0]
+    # if screen_width < 1920:
+    #     print("Current Screen size is {}".format(screen_width))
+    #     driver.execute_script("document.body.style.zoom='80%'")
     # else:
     #     pass
 
 
 def automate_gameplay():
-    # sometimes it takes time to load
+    # Terms and service process
+    if is_image_exists(images['terms-and-service'], timeout=10):
+        if click_button(images['terms-and-service-checkbox'], timeout=10):
+            click_button(images['terms-and-service-accept'], timeout=10)
+    else:
+        pass
+    # click connect wallet button
+    if click_button(images['connect-wallet'], timeout=10):
+        print('🎉 Connect wallet button detected, logging in!')
+
+    # newly created account
+    if click_button(images['btn-next'], timeout=10):
+        if click_button(images['btn-connect'], timeout=10):
+            pass
+    # sometimes signup popup won't show fast
     time.sleep(2)
-    if click_button(images['hero-icon'], timeout=5):
-        print('Treasure hunt btn clicked')
+    if click_button(images['select-wallet-2'], timeout=10):
         pass
-    if click_button(images['go-rest-all'], timeout=5):
+    if click_button(images['hero-icon'], timeout=10):
         pass
-    if click_button(images['go-work-all'], timeout=5):
+    if click_button(images['go-rest-all'], timeout=10):
         pass
-    # sometimes loading the content is slow
-    # if not click_button(images['hero-icon'], timeout=5):
-    #     print("Re-run automate_gameplay method for validation")
-    #     if click_button(images['hero-icon'], timeout=5):
-    #         pass
+    if click_button(images['go-work-all'], timeout=10):
+        pass
     # return to home page to start game
-    if click_button(images['x'], timeout=5):
+    if click_button(images['x'], timeout=10):
         if click_button(images['treasure-hunt-icon'], timeout=10):
             pass
-        else:
-            return
 
 
 def set_all_work():
@@ -334,30 +298,26 @@ def set_all_work():
 
 
 def round_robin_clicker():
+    print("round_robin_clicker...")
     global scheduler
     current_timestamp = int(time.time())
     # track all available browsers
-    icons = positions(images[os_browser], threshold=0.7)
-    for (x, y, w, h) in icons:
-        # make sure that wallet isn't disconnected
-        try:
-            login()
-        finally:
-            # place the cursor into the browser icon and click
-            random_move(x + (w / 2), y + (h / 2), 1)
-            pyautogui.click()
-
-        time.sleep(1)
+    browser = positions(images[os_browser], threshold=0.9)
+    for (x, y, w, h) in browser:
+        random_move(x + (w / 2), y + (h / 2), 1)
+        pyautogui.click()
         # Set back all characters to work if 15 minutes has passed based on scheduler
         if current_timestamp >= scheduler:
             set_all_work()
-        # select at least 2 images to click and repeat it thrice
-        for counts in range(0, 3):
-            if click_button(images['key_to_click']):
-                time.sleep(1)
-            if click_button(images['nth_to_click']):
-                time.sleep(1)
 
+        screen_size = system_screen_size()
+        width = screen_size[0]
+        height = screen_size[1]
+        # move the cursor on the page randomly
+        for counts in range(0, 3):
+            rand_width_loc = randint(20, width - 20)
+            rand_height_loc = randint(20, height - 20)
+            random_move(rand_width_loc, rand_height_loc, 1)
     # make sure to update scheduler if needed
     if current_timestamp >= scheduler:
         scheduler = current_timestamp + (60 * go_work_all_scheduler)
@@ -366,20 +326,22 @@ def round_robin_clicker():
 def main():
     global images
     global os_browser
-    global accounts # array of private keys
-    global scheduler # timestamp format
+    global accounts  # array of private keys
+    global scheduler  # timestamp format
 
     images = load_images()
     # browser count will based on this value.
     accounts = wl['accounts']
+
     # load type of browser icon based on OS
     current_platform = platform.system().lower()
     if current_platform == "linux" or current_platform == "linux2":
         os_browser = "linux-chrome"
     elif current_platform == "darwin":
         os_browser = "macos-chrome"
-    elif current_platform == "win32" or current_platform == "windows":
+    else:
         os_browser = "windows-chrome"
+
     # initialize browsers and wallet based on the accounts count
     for x in range(0, len(accounts)):
         # check if account is the owner of the pass phrase
@@ -393,30 +355,32 @@ def main():
     if len(accounts) > 2:
         time.sleep(5)
     else:
-        time.sleep(15)
+        time.sleep(10)
+
     # track all open Google Chrome browser, and iterate each one.
-    icons = positions(images[os_browser], threshold=0.7)
-    for (x, y, w, h) in icons:
+    browser = positions(images[os_browser], threshold=0.9)
+    for (x, y, w, h) in browser:
         # place the cursor into the browser icon and click
         random_move(x + (w / 2), y + (h / 2), 1)
-        time.sleep(0.9)
+        # time.sleep(0.9)
         # random_move(x + (w / 2), y + (h / 2), 1, to_up=-15)
         pyautogui.click()
         # add delay to make sure game is loaded properly
-        login()
+        # login()
         automate_gameplay()
 
     # track the scheduler started in timestamp format
     scheduler = int(time.time()) + (60 * go_work_all_scheduler)
+
     # set every 3 minutes, do click a round-robin alt-tab with click to avoid server disconnection
     while True:
+        print("Run next scheduler at ".format(round_robin_scheduler))
         round_robin_clicker()
         print("Waiting for {} minutes to run next scheduler.".format(round_robin_scheduler))
-        time.sleep(round_robin_scheduler*60)
+        time.sleep(round_robin_scheduler * 60)
         # for i in tqdm(range(round_robin_scheduler*60)):
         #     time.sleep(1)
 
 
 if __name__ == '__main__':
-
     main()
