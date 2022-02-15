@@ -306,6 +306,18 @@ def set_all_work():
                 pass
 
 
+# avoid game idle
+def avoid_game_idle():
+    if click_button(images['go-back-arrow'], timeout=10):
+        print('Back to home page')
+        time.sleep(1)
+        if click_button(images['hero-icon'], timeout=10):
+            pass
+        if click_button(images['x'], timeout=10):
+            if click_button(images['treasure-hunt-icon'], timeout=10):
+                pass
+
+
 def round_robin_clicker():
     print("round_robin_clicker...")
     global scheduler
@@ -315,19 +327,19 @@ def round_robin_clicker():
     for (x, y, w, h) in browser:
         random_move(x + (w / 2), y + (h / 2), 1)
         pyautogui.click()
+        avoid_game_idle()
         # Set back all characters to work if 15 minutes has passed based on scheduler
         if current_timestamp >= scheduler:
             set_all_work()
-
-        screen_size = system_screen_size()
-        width = screen_size[0]
-        height = screen_size[1]
-        # move the cursor on the page randomly
-        for counts in range(0, 3):
-            click_button(images['key_to_click'], timeout=10)
-            rand_width_loc = randint(20, width - 20)
-            rand_height_loc = randint(20, height - 20)
-            random_move(rand_width_loc, rand_height_loc, 1)
+        # screen_size = system_screen_size()
+        # width = screen_size[0]
+        # height = screen_size[1]
+        # # move the cursor on the page randomly
+        # for counts in range(0, 3):
+        #     click_button(images['key_to_click'], timeout=10)
+        #     rand_width_loc = randint(20, width - 20)
+        #     rand_height_loc = randint(20, height - 20)
+        #     random_move(rand_width_loc, rand_height_loc, 1)
     # make sure to update scheduler if needed
     if current_timestamp >= scheduler:
         scheduler = current_timestamp + (60 * go_work_all_scheduler)
