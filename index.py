@@ -294,7 +294,16 @@ def set_all_work():
     print("Setting all characters to go back to work!!!")
     if click_button(images['go-back-arrow'], timeout=10):
         print('Back to home page')
-        automate_gameplay()
+        if click_button(images['hero-icon'], timeout=10):
+            pass
+        if click_button(images['go-rest-all'], timeout=10):
+            pass
+        if click_button(images['go-work-all'], timeout=10):
+            pass
+        # return to home page to start game
+        if click_button(images['x'], timeout=10):
+            if click_button(images['treasure-hunt-icon'], timeout=10):
+                pass
 
 
 def round_robin_clicker():
