@@ -119,6 +119,22 @@ def click_button(img, position='left', timeout=3, threshold=ct['default']):
     return False
 
 
+def is_image_exists(img, timeout=3, threshold=ct['default']):
+    # logger(None, progress_indicator=True)
+    start = time.time()
+    has_timed_out = False
+    while not has_timed_out:
+        matches = positions(img, threshold=threshold)
+
+        if len(matches) == 0:
+            has_timed_out = time.time() - start > timeout
+            continue
+        # return true if image has been found
+        return True
+    # return false if no image found on the screen
+    return False
+
+
 def remove_suffix(input_string, suffix):
     """Returns the input_string without the suffix"""
     if suffix and input_string.endswith(suffix):
@@ -227,7 +243,7 @@ def init_wallet(private_key, is_sub_account):
     # open game landing page in new tab, and set the game ready to play
     driver.execute_script('''window.open("https://bombcrypto.io/","_blank");''')
     driver.switch_to.window(driver.window_handles[1])
-    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "playnow"))).click()
+    WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "play-now"))).click()
     # check if screen is less than 1920x1080 resolution then zoom out to 80%
     # to make sure game is displayed in fullscreen for the bot to work properly.
     if system_screen_size()[0] < 1920:
@@ -250,6 +266,14 @@ def init_wallet(private_key, is_sub_account):
 
 
 def login():
+    # Terms and service process
+    if is_image_exists(images['terms-and-service'], timeout=20):
+        if click_button(images['terms-and-service-checkbox'], timeout=10):
+            if click_button(images['terms-and-service-accept'], timeout=10):
+                pass
+    else:
+        return
+
     if click_button(images['connect-wallet'], timeout=10):
         print('🎉 Connect wallet button detected, logging in!')
         pass
