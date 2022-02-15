@@ -324,6 +324,7 @@ def round_robin_clicker():
         height = screen_size[1]
         # move the cursor on the page randomly
         for counts in range(0, 3):
+            click_button(images['key_to_click'], timeout=10)
             rand_width_loc = randint(20, width - 20)
             rand_height_loc = randint(20, height - 20)
             random_move(rand_width_loc, rand_height_loc, 1)
