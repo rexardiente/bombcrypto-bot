@@ -271,8 +271,9 @@ def login():
         if click_button(images['terms-and-service-checkbox'], timeout=10):
             if click_button(images['terms-and-service-accept'], timeout=10):
                 pass
+    # to avoid error if no accept terms and conditions needed
     else:
-        return
+        pass
 
     if click_button(images['connect-wallet'], timeout=10):
         print('🎉 Connect wallet button detected, logging in!')
