@@ -157,106 +157,105 @@ def load_images(dir_path='{}/targets/'.format(SYSTEM_PATH)):
 
 
 def init_wallet(private_key, is_sub_account):
-    # Login metamask on first load..
-    chrome_options = Options()
-    chrome_options.add_extension(xt['PATH'])
-    # set browser in full screen
-    chrome_options.add_argument('start-maximized')
-    chrome_options.add_experimental_option("useAutomationExtension", False)
-    # enable for browser to stay open, even selenium is finished
-    chrome_options.add_experimental_option("detach", True)
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    while True:
+        try:
+            # Login metamask on first load..
+            chrome_options = Options()
+            chrome_options.add_extension(xt['PATH'])
+            # set browser in full screen
+            chrome_options.add_argument('start-maximized')
+            chrome_options.add_experimental_option("useAutomationExtension", False)
+            # enable for browser to stay open, even selenium is finished
+            chrome_options.add_experimental_option("detach", True)
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+            driver.implicitly_wait(20)
 
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-    driver.implicitly_wait(10)
-    wait = WebDriverWait(driver, 20)
-    # wait all 2 windows are loaded
-    wait.until(EC.number_of_windows_to_be(2))
-    # remove empty tab and use the wallet tab
-    try:
-        driver.switch_to.window(driver.window_handles[1])
-        driver.close()
-    finally:
-        wait.until(EC.number_of_windows_to_be(1))
-        driver.switch_to.window(driver.window_handles[0])
+            wait = WebDriverWait(driver, 20)
+            # wait all 2 windows are loaded
+            wait.until(EC.number_of_windows_to_be(2))
+            # remove empty tab and use the wallet tab
+            try:
+                driver.switch_to.window(driver.window_handles[1])
+                driver.close()
+            finally:
+                wait.until(EC.number_of_windows_to_be(1))
+                driver.switch_to.window(driver.window_handles[0])
 
-    # wait until the extension has loaded.
-    wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="Get Started"]'))).click()
-    wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="Import wallet"]'))).click()
-    wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="No Thanks"]'))).click()
-    # After this you will need to enter you wallet details
-    inputs = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//input')))
-    # inputs = driver.find_elements(By.XPATH, '//input')
-    inputs[0].send_keys(wl['SECRET_RECOVERY_PHRASE'])
-    inputs[1].send_keys(wl['NEW_PASSWORD'])
-    inputs[2].send_keys(wl['NEW_PASSWORD'])
+            # wait until the extension has loaded.
+            wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="Get Started"]'))).click()
+            wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="Import wallet"]'))).click()
+            wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="No Thanks"]'))).click()
+            # After this you will need to enter you wallet details
+            inputs = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//input')))
+            # inputs = driver.find_elements(By.XPATH, '//input')
+            inputs[0].send_keys(wl['SECRET_RECOVERY_PHRASE'])
+            inputs[1].send_keys(wl['NEW_PASSWORD'])
+            inputs[2].send_keys(wl['NEW_PASSWORD'])
 
-    wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'first-time-flow__terms'))).click()
-    wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="Import"]'))).click()
-    wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="All Done"]'))).click()
-    # close pop up dialog box
-    wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'popover-header__button'))).click()
-    wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'network-display--clickable'))).click()
-    # Add custom network into metamask wallet
-    wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="Add Network"]'))).click()
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'first-time-flow__terms'))).click()
+            wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="Import"]'))).click()
+            wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="All Done"]'))).click()
+            # close pop up dialog box
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'popover-header__button'))).click()
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'network-display--clickable'))).click()
+            # Add custom network into metamask wallet
+            wait.until(EC.presence_of_element_located((By.XPATH, '//button[text()="Add Network"]'))).click()
 
-    # Add network form fields
-    inputs = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//input')))
-    inputs[0].send_keys(wl['network_name'])
-    inputs[1].send_keys(wl['rpc_url'])
-    inputs[2].send_keys(wl['chain_id'])
-    inputs[3].send_keys(wl['symbol'])
-    inputs[4].send_keys(wl['block_exp_url'])
+            # Add network form fields
+            inputs = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//input')))
+            inputs[0].send_keys(wl['network_name'])
+            inputs[1].send_keys(wl['rpc_url'])
+            inputs[2].send_keys(wl['chain_id'])
+            inputs[3].send_keys(wl['symbol'])
+            inputs[4].send_keys(wl['block_exp_url'])
 
-    # save new network
-    wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'btn-primary'))).click()
-    # make sure drivers are loaded
-    # driver.implicitly_wait(20)
-    time.sleep(2)
-    #  if not the owner then import new private key and change wallet account
-    if is_sub_account:
-        # point the cursor into network button
-        # then add # to make it pointed into accounts button
-        accounts_tab = positions(images['networks_tab'], threshold=0.7)
-        for (x, y, w, h) in accounts_tab:
-            random_move(x + (w / 2), y + (h / 2), 1, to_right=100)
-            pyautogui.click()
-        time.sleep(0.5)
-        # import wallet process
-        import_acc = positions(images['import_account'], threshold=0.7)
-        for (ix, iy, iw, ih) in import_acc:
-            random_move(ix + (iw / 2), iy + (ih / 2), 1)
-            pyautogui.click()
-        time.sleep(0.5)
-        # input sub_account private key
-        inputs = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//input')))
-        inputs[0].send_keys(private_key)
-        # submit new account
-        import_button = positions(images['import_account_button'], threshold=0.7)
-        for (kx, ky, kw, kh) in import_button:
-            random_move(kx + (kw / 2), ky + (kh / 2), 1)
-            pyautogui.click()
-        time.sleep(0.5)
+            # save new network
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'btn-primary'))).click()
+            # make sure drivers are loaded
+            # driver.implicitly_wait(20)
+            time.sleep(2)
+            #  if not the owner then import new private key and change wallet account
+            if is_sub_account:
+                # point the cursor into network button
+                # then add # to make it pointed into accounts button
+                accounts_tab = positions(images['networks_tab'], threshold=0.7)
+                for (x, y, w, h) in accounts_tab:
+                    random_move(x + (w / 2), y + (h / 2), 1, to_right=100)
+                    pyautogui.click()
+                time.sleep(0.5)
+                # import wallet process
+                import_acc = positions(images['import_account'], threshold=0.7)
+                for (ix, iy, iw, ih) in import_acc:
+                    random_move(ix + (iw / 2), iy + (ih / 2), 1)
+                    pyautogui.click()
+                time.sleep(0.5)
+                # input sub_account private key
+                inputs = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//input')))
+                inputs[0].send_keys(private_key)
+                # submit new account
+                import_button = positions(images['import_account_button'], threshold=0.7)
+                for (kx, ky, kw, kh) in import_button:
+                    random_move(kx + (kw / 2), ky + (kh / 2), 1)
+                    pyautogui.click()
+                time.sleep(0.5)
 
-    # open game landing page in new tab, and set the game ready to play
-    driver.execute_script('''window.open("https://app.bombcrypto.io/","_blank");''')
-    driver.switch_to.window(driver.window_handles[1])
-    wait.until(EC.number_of_windows_to_be(2))
-    # remove empty tab and use the wallet tab
-    try:
-        driver.switch_to.window(driver.window_handles[0])
-        driver.close()
-    finally:
-        wait.until(EC.number_of_windows_to_be(1))
-        driver.switch_to.window(driver.window_handles[0])
-    # check if screen is less than 1920x1080 resolution then zoom out to 80%
-    # to make sure game is displayed in fullscreen for the bot to work properly.
-    # screen_width = system_screen_size()[0]
-    # if screen_width < 1920:
-    #     print("Current Screen size is {}".format(screen_width))
-    #     driver.execute_script("document.body.style.zoom='80%'")
-    # else:
-    #     pass
+            # open game landing page in new tab, and set the game ready to play
+            driver.execute_script('''window.open("https://app.bombcrypto.io/","_blank");''')
+            driver.switch_to.window(driver.window_handles[1])
+            wait.until(EC.number_of_windows_to_be(2))
+            # remove empty tab and use the wallet tab
+            try:
+                driver.switch_to.window(driver.window_handles[0])
+                driver.close()
+            finally:
+                wait.until(EC.number_of_windows_to_be(1))
+                driver.switch_to.window(driver.window_handles[0])
+
+            print("Done to load extension")
+            return False
+        except Exception:
+            print("Failed to load extension, Please close that browser manually")
 
 
 def automate_gameplay():
