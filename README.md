@@ -7,8 +7,9 @@ As the developer, I created this bot just for my personal use, I decided to
 publish to help other people and maybe get a few bucks in donation.
 I would like to keep this bot free and open source, so as an incentive for me to spend the time and energy maintaining the
 bot, I have created some donation milestones so people can collectively fund
-the bot.
+the bot..
 
+#### ** Note: ** _Sometimes the bot can't recognize the image to click because it is tested in different screen sizes. It is recommended to use the suggested requirements based on your machine Operating System or you might need to create a new image based on your screen and replace the existing image._
 
 ### Smart Chain Wallet:
 #### 0x4D42fDf7F2cD34304c4D801089417f04B490aD22
@@ -18,6 +19,15 @@ the bot.
 The bombcrypto developers have not manifested themselves yet regarding the
 use of bots. Do your own research and use the bot at your own risk. I am not
 responsible for any future penalties.
+
+
+# Recommended System Requirements
+
+- Windows 10 (1920 x 1080 resolution)
+- Ubuntu 20.04 (1280 x 720 resolution)
+- Macos (2560 x 1440 resolution)
+- Installed Python 2 or 3
+- Other dependencies are might need to be manually installed in your system.
 
 
 # Installation:
